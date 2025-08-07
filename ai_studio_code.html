@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구구단 연습</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+            flex-direction: column;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 15px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        #problem {
+            font-size: 2.5em;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #0056b3;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 10px;
+            font-size: 1.2em;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            height: 30px;
+        }
+        .correct {
+            color: #28a745;
+        }
+        .incorrect {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>구구단 연습</h1>
+        <div id="problem"></div>
+        <div>
+            <input type="number" id="answer" autofocus>
+            <button onclick="checkAnswer()">확인</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        let num1, num2, correctAnswer;
+
+        // 문제를 출제하는 함수
+        function generateProblem() {
+            // 2부터 9까지의 난수 생성
+            num1 = Math.floor(Math.random() * 8) + 2; // 2~9
+            num2 = Math.floor(Math.random() * 9) + 1; // 1~9
+            correctAnswer = num1 * num2;
+
+            document.getElementById('problem').textContent = `${num1} × ${num2} = ?`;
+            document.getElementById('result').textContent = '';
+            document.getElementById('answer').value = '';
+            document.getElementById('answer').focus();
+        }
+
+        // 정답을 확인하는 함수
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            const resultElement = document.getElementById('result');
+
+            if (isNaN(userAnswer)) {
+                resultElement.textContent = "숫자를 입력하세요!";
+                resultElement.className = 'incorrect';
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                resultElement.textContent = "정답입니다! 🎉";
+                resultElement.className = 'correct';
+                setTimeout(generateProblem, 1000); // 1초 후 다음 문제 출제
+            } else {
+                resultElement.textContent = `틀렸어요. 다시 시도해보세요.`;
+                resultElement.className = 'incorrect';
+                document.getElementById('answer').value = '';
+                document.getElementById('answer').focus();
+            }
+        }
+
+        // Enter 키로도 답을 제출할 수 있도록 이벤트 리스너 추가
+        document.getElementById('answer').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // 페이지가 로드되면 첫 문제 출제
+        window.onload = generateProblem;
+    </script>
+
+</body>
+</html>
