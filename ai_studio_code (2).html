@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구구단 연습 (단 선택)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f7f6;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            text-align: center;
+            padding: 30px 40px;
+            border-radius: 15px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 550px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        #dan-selection {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        #dan-selection h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #555;
+            font-weight: 600;
+        }
+        .checkbox-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px 18px; /* 세로 간격, 가로 간격 */
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 6px;
+        }
+        #problem {
+            font-size: 3em;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #0056b3;
+            height: 60px; /* 높이를 고정하여 레이아웃 변경 방지 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+        input[type="number"] {
+            width: 120px;
+            padding: 12px;
+            font-size: 1.2em;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        button {
+            padding: 12px 22px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            height: 30px;
+        }
+        .correct {
+            color: #28a745;
+        }
+        .incorrect {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>구구단 연습</h1>
+        
+        <div id="dan-selection">
+            <h3>연습할 단을 선택하세요 (1단 ~ 9단)</h3>
+            <div class="checkbox-group">
+                <div class="checkbox-item"><input type="checkbox" id="dan1" name="dan" value="1"><label for="dan1">1단</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dan2" name="dan" value="2" checked><label for="dan2">2단</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dan3" name="dan" value="3" checked><label for="dan3">3단</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dan4" name="dan" value="4"><label for="dan4">4단</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dan5" name="dan" value="5"><label for="dan5">5단</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dan6" name="dan" value="6"><label for="dan6">6단</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dan7" name="dan" value="7"><label for="dan7">7단</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dan8" name="dan" value="8"><label for="dan8">8단</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dan9" name="dan" value="9"><label for="dan9">9단</label></div>
+            </div>
+        </div>
+
+        <div id="problem"></div>
+        <div class="input-group">
+            <input type="number" id="answer" autofocus>
+            <button onclick="checkAnswer()">확인</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        let num1, num2, correctAnswer;
+
+        const problemElement = document.getElementById('problem');
+        const resultElement = document.getElementById('result');
+        const answerElement = document.getElementById('answer');
+
+        // 선택된 단들을 가져오는 함수
+        function getSelectedDans() {
+            const checkboxes = document.querySelectorAll('input[name="dan"]:checked');
+            const selectedDans = [];
+            checkboxes.forEach((checkbox) => {
+                selectedDans.push(parseInt(checkbox.value));
+            });
+            return selectedDans;
+        }
+
+        // 문제를 출제하는 함수
+        function generateProblem() {
+            const selectedDans = getSelectedDans();
+
+            if (selectedDans.length === 0) {
+                problemElement.textContent = "연습할 단을 선택하세요.";
+                correctAnswer = null; // 정답 초기화
+                resultElement.textContent = '';
+                answerElement.value = '';
+                return;
+            }
+
+            // 선택된 단 중에서 무작위로 하나 선택
+            num1 = selectedDans[Math.floor(Math.random() * selectedDans.length)];
+            // 1부터 9까지의 수 중에서 무작위로 선택
+            num2 = Math.floor(Math.random() * 9) + 1; 
+            correctAnswer = num1 * num2;
+
+            problemElement.textContent = `${num1} × ${num2} = ?`;
+            resultElement.textContent = '';
+            answerElement.value = '';
+            answerElement.focus();
+        }
+
+        // 정답을 확인하는 함수
+        function checkAnswer() {
+            if (correctAnswer === null) {
+                resultElement.textContent = "먼저 단을 선택해주세요.";
+                resultElement.className = 'incorrect';
+                return;
+            }
+
+            const userAnswer = parseInt(answerElement.value);
+
+            if (isNaN(userAnswer)) {
+                resultElement.textContent = "숫자를 입력하세요!";
+                resultElement.className = 'incorrect';
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                resultElement.textContent = "정답입니다! 🎉";
+                resultElement.className = 'correct';
+                setTimeout(generateProblem, 1200); // 1.2초 후 다음 문제 출제
+            } else {
+                resultElement.textContent = `틀렸어요. 정답은 ${correctAnswer} 입니다.`;
+                resultElement.className = 'incorrect';
+                // 틀렸을 경우, 1.5초 후에 새 문제 출제
+                setTimeout(generateProblem, 1500);
+            }
+        }
+
+        // Enter 키로도 답을 제출할 수 있도록 이벤트 리스너 추가
+        answerElement.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // 체크박스 선택을 변경하면 바로 새 문제를 출제
+        document.querySelectorAll('input[name="dan"]').forEach((checkbox) => {
+            checkbox.addEventListener('change', generateProblem);
+        });
+
+        // 페이지가 로드되면 첫 문제 출제
+        window.onload = generateProblem;
+    </script>
+
+</body>
+</html>
